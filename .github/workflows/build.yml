@@ -47,7 +47,7 @@ jobs:
           args: 'zephyr-export'
       
       - name: West Build (waaffle_rev3)
-        uses: 'zmkfirmware/zmk-build-arm:2.5'
+        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
         id: west-build-waaffle_rev3
         with:
           args: 'build "-s zmk/app -b nice_nano -- -DSHIELD=waaffle_rev3 -DZMK_CONFIG=/github/workspace/config"'
