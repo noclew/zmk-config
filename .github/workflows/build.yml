@@ -25,35 +25,19 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+            
       - name: West Init
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-init
-        with:
-          args: 'init "-l config"'
+        run: west init -l config
       - name: West Update
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-update
-        with:
-          args: 'update'
-      - name: West Config Zephyr Base
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-config
-        with:
-          args: 'config "--global zephyr.base-prefer configfile"'
-      - name: West Zephyr Export
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-zephyr-export
-        with:
-          args: 'zephyr-export'
+        run: west update
+      - name: West Zephyr export
+        run: west zephyr-export
       
       - name: West Build (waaffle_rev3)
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-build-waaffle_rev3
-        with:
-          args: 'build "-s zmk/app -b nice_nano -- -DSHIELD=waaffle_rev3 -DZMK_CONFIG=/github/workspace/config"'
+        run: west build "-s zmk/app -b nice_nano -- -DSHIELD=waaffle_rev3 -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
       - name: waaffle_rev3 DTS File
         if: ${{ always() }}
-        run: cat -n build/zephyr/nice_nano.dts.pre.tmp
+        run: cat -n build/zephyr/.dts.pre.tmp
       - name: waaffle_rev3 Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
@@ -68,13 +52,10 @@ jobs:
         run: sudo rm -rf build/zephyr/*
           
       - name: West Build (vanana_rev2)
-        uses: 'docker://zmkfirmware/zmk-build-arm:2.5'
-        id: west-build-vanana_rev2
-        with:
-          args: 'build "-s zmk/app -p -b nice_nano -- -DSHIELD=vanana_rev2 -DZMK_CONFIG=/github/workspace/config"'
+        run: west build "-s zmk/app -b nice_nano -- -DSHIELD=vanana_rev2 -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"       
       - name: vanana_rev2 DTS File
         if: ${{ always() }}
-        run: cat -n build/zephyr/nice_nano.dts.pre.tmp
+        run: cat -n build/zephyr/.dts.pre.tmp
       - name: vanana_rev2 Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
